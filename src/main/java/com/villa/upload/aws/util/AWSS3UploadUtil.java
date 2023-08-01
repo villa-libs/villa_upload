@@ -2,6 +2,7 @@ package com.villa.upload.aws.util;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.villa.upload.aws.config.AWSS3Config;
@@ -18,9 +19,13 @@ import java.io.InputStream;
  * 上传文件工具类
  */
 public class AWSS3UploadUtil {
-
     private static final AmazonS3 amazonS3= SpringContextUtil.getBean(AmazonS3.class);
     private static AWSS3Config awsS3Config = SpringContextUtil.getBean(AWSS3Config.class);
+    /** 从桶中删除文件 */
+    public static void delete(String fileName){
+        DeleteObjectRequest request = new DeleteObjectRequest(awsS3Config.getBucket(), fileName);
+        amazonS3.deleteObject(request);
+    }
     /**
      * 亚马逊S3上传文件 上传会自动生成文件名 根据文件md5命名 如果
      * @param file

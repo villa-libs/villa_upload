@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.villa</groupId>
     <artifactId>upload</artifactId>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <description>上传相关处理</description>
     <packaging>jar</packaging>
 
