@@ -27,44 +27,12 @@ public class AWSS3Config {
     @Value("${aws.endpoint:https://sevensea.s3.ap-southeast-1.amazonaws.com}")
     private String endpoint;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
-
-    public String getRegion() {
-        return region;
-    }
-
-    public void setRegion(String region) {
-        this.region = region;
-    }
-
     public String getBucket() {
         return bucket;
     }
 
-    public void setBucket(String bucket) {
-        this.bucket = bucket;
-    }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
+    public Protocol getProtocol() {
+        return endpoint !=null && endpoint.startsWith("https") ? Protocol.HTTPS : Protocol.HTTP;
     }
 
     @Bean
@@ -76,20 +44,19 @@ public class AWSS3Config {
         AwsClientBuilder.EndpointConfiguration endpointConfig = new AwsClientBuilder.EndpointConfiguration(endpoint, region);
 
         ClientConfiguration config = new ClientConfiguration();
-//        config.setSignerOverride("S3SignerType");//预签名
-        config.setProtocol(Protocol.HTTP);
-//        config.withUseExpectContinue(false);
+        config.setProtocol(getProtocol());
         config.disableSocketProxy();
+        config.setSocketTimeout(60*60*1000);
+        config.setConnectionTimeout(60*60*1000);
+        config.setRequestTimeout(60*60*1000);
+        config.withClientExecutionTimeout(60*60*1000);
 
-        AmazonS3 client = AmazonS3Client.builder()
+        return AmazonS3Client.builder()
                 .withEndpointConfiguration(endpointConfig)
                 .withClientConfiguration(config)
                 .withCredentials(credentialsProvider)
                 .disableChunkedEncoding()
                 .withPathStyleAccessEnabled(true)
-//                .withForceGlobalBucketAccessEnabled(true)
                 .build();
-
-        return client;
     }
 }
